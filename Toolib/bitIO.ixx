@@ -22,8 +22,8 @@ namespace wood
 		bitarry(bitarry&& obj);//移动构造函数
 		~bitarry();
 		bool setSize(const size_t bitsize);//仅仅用于定义声明时没申请内存的状况
-		bitarry read(const int v, const int len)const;
-		bool write(const int v, const int len, const unsigned char* data);
+		bitarry read(const size_t v, const int len)const;
+		bool write(const size_t v, const int len, const unsigned char* data);
 		void Print(unsigned short CHD)const;
 		const unsigned char* c_str()const;
 		const size_t resize()const;

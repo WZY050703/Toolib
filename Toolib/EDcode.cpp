@@ -8,7 +8,7 @@ namespace wood {
     {
         int len = strlen(str);
         uint32_t stmp = 0;
-        unsigned int k = 0;
+        int k = 0;
         bool isfinish = true;
         for (int i = 0; i < len; i += 3)
         {
@@ -50,13 +50,22 @@ namespace wood {
         unsigned char* recBuffer = new unsigned char[len];
         recBuffer[len - 1] = 0;//封闭位，形成字符串
         recBuffer[len - 2] = 0;//次封闭位，若用不到则置0
-        for (int i = 0;i < len - 1;i++)
+        for (size_t i = 0;i < len - 1;i++)
         {
             //str.read(ssize - i * 6, 6);//debug
             //std::cout << i << "," << (int)str.read(i * 6, 6).c_str()[0] << "," << __BASE64[str.read(i * 6, 6).c_str()[0]] << std::endl;
-            recBuffer[i] = __BASE64[str.read(i * 6, 6).c_str()[0]];
+            if ((i + 1) * 6 <= ssize)
+                recBuffer[i] = __BASE64[str.read(i * 6, 6).c_str()[0]];
+            else
+            {
+                if (i * 6 < ssize)
+                    recBuffer[i] = __BASE64[str.read(i * 6, ssize - i * 6).c_str()[0]];
+                break;
+            }
         }
-        return wood::bitarry(recBuffer, len);
+        wood::bitarry reba(recBuffer, len);
+        delete[] recBuffer;
+        return reba;
     }
 
     wood::bitarry ToCBase64(const char* str, int len)

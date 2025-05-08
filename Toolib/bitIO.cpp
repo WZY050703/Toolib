@@ -59,7 +59,7 @@ namespace wood {
 			return false;
 	}
 
-	bitarry bitarry::read(const int v, const int len) const
+	bitarry bitarry::read(const size_t v, const int len) const
 	{
 		if (v >= this->size || v < 0)//标位超出数据块
 		{
@@ -109,7 +109,7 @@ namespace wood {
 		return re;
 	}
 
-	bool bitarry::write(const int v, const int len, const unsigned char* data)
+	bool bitarry::write(const size_t v, const int len, const unsigned char* data)
 	{
 		if (v >= this->size || v < 0)
 			return false;//越界返回
