@@ -2,27 +2,31 @@ module WoodTools:bitIO;
 import std;
 
 namespace wood {
-	bitarry::bitarry()
+	void inline bitarry::null_init()
 	{
 		this->size = 0;
 		this->arryp = nullptr;
+		this->isgood = true;
+		this->errnum = 0;
+	}
+
+	bitarry::bitarry()
+	{
+		this->null_init();
 	}
 
 	bitarry::bitarry(const size_t bitsize)
 	{
-		this->size = (bitsize % 8 == 0) ? bitsize : bitsize + 8 - (bitsize % 8);
-		this->arryp = new unsigned char[this->size / 8];
+		this->null_init();
+		this->setSize(bitsize);
 	}
 
 	bitarry::bitarry(const unsigned char* arry, const size_t len)
 	{
-		this->size = 0;
-		this->arryp = nullptr;
+		this->null_init();
 		this->setSize(len * 8);
 		for (int i = 0;i < len;i++)
-		{
 			this->arryp[i] = arry[i];
-		}
 	}
 
 	bitarry::bitarry(const bitarry& obj)
@@ -59,11 +63,12 @@ namespace wood {
 			return false;
 	}
 
-	bitarry bitarry::read(const size_t v, const int len) const
+	bitarry bitarry::read(const size_t v, const int len)
 	{
 		if (v >= this->size || v < 0)//标位超出数据块
 		{
-			//std::cerr << "ERR[bitarry.read()]:Position out of data block.\n";
+			this->isgood = false;
+			this->errnum = 1;
 			return bitarry();//异常返回
 		}
 		int pi = v % 8, rei = 0;//bit位指针
@@ -109,13 +114,16 @@ namespace wood {
 		return re;
 	}
 
-	bool bitarry::write(const size_t v, const int len, const unsigned char* data)
+	bool bitarry::write(const size_t v, const int len, wood::bitarry bdata)
 	{
 		if (v >= this->size || v < 0)
+		{
+			this->isgood = false;
+			this->errnum = 2;
 			return false;//越界返回
+		}
 		int pi = v % 8, rei = 0;//相对比特位，data数据位
 		int ci;//下标索引标识
-		wood::bitarry bdata(data, len);
 		for (rei;rei < len;rei += 8)
 		{
 			ci = (v + rei) / 8;
@@ -146,11 +154,23 @@ namespace wood {
 		return true;
 	}
 
-	void bitarry::Print(unsigned short CHD)const
+	bool bitarry::write(const size_t v, const int len, const char* data)
+	{
+		return this->write(v, len, bitarry((unsigned char*)data, len));
+	}
+
+	bool bitarry::write(const size_t v, const int len, const unsigned char* data)
+	{
+		return this->write(v, len, bitarry(data, len));
+	}
+
+	void bitarry::Print(unsigned short CHD)
 	{
 		if (CHD >= 3)
 		{
-			std::cerr << "ERR[bitarry.Print()]:Wrong print moduel.\n";
+			this->isgood = false;
+			this->errnum = 0;
+			std::cerr << bitarry_Errs[0] << std::endl;
 			return;
 		}
 		for (int i = 0;i < (this->size / 8);i++)
@@ -180,5 +200,20 @@ namespace wood {
 		for (int i = 0;i < this->size / 8;i++)
 			this->arryp[i] = data;
 		return;
+	}
+
+	bool bitarry::good()const
+	{
+		return this->isgood;
+	}
+
+	const char* bitarry::err()
+	{
+		if (this->isgood == false)
+		{
+			this->isgood = true;//恢复标志
+			return bitarry_Errs[this->errnum];
+		}
+		return nullptr;
 	}
 }

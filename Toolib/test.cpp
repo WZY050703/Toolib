@@ -3,12 +3,15 @@ import WoodTools;
 
 int main()
 {
-	char si[4] = { 'a'};
-	int ai = *((int*)si);
-	std::cout << std::hex << ai << std::endl;
-	wood::bitarry re = wood::ToCBase64(si, 1);
-	re.Print(0);//不是正常的Base64!
-	std::cout << "\n";
+	using namespace std;
+	char si[4] = {'a'};
+	wood::bitarry re= wood::ToCBase64(si, 1);
+	re.Print(0);
+	cout << endl;
 	re.Print(1);
+	cout << endl;
+	re.Print(5);
+	cout << re.good() << endl << re.err() << endl;
+	cout << re.good() << endl;
 	return 0;
 }
