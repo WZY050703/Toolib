@@ -1,7 +1,7 @@
 # Toolib
 Some tool libs used by myself.
 
-## Wright before
+## Write before
 This project is coded, checked and pulled all in VS. And it used the module which is add in C++23, so check your settings.
 
 **I can't promise it is safe.**
