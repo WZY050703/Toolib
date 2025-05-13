@@ -28,6 +28,7 @@ namespace wood
 		bitarry(bitarry&& obj);//移动构造函数
 		~bitarry();
 		bool setSize(const size_t bitsize);//仅仅用于定义声明时没申请内存的状况
+		void setMemModel(int model);//0:normal, 1:turned bit
 		bitarry read(const size_t v, const int len);
 		bool write(const size_t v, const int len, wood::bitarry bdata);
 		bool write(const size_t v, const int len, const char* data);
@@ -36,14 +37,14 @@ namespace wood
 		const unsigned char* c_str()const;
 		const size_t resize()const;
 		void setMermey(const unsigned char data);
+		void setMermey(const unsigned char* data, int v, int len);
 		bool good()const;
 		const char* err();
 
 	private:
 		size_t size;
 		unsigned char* arryp;
-		bool isgood;
-		int errnum;
+		unsigned int statusnum; //now: 0-1: memrey mod, 2:err flag, 3-32: err num
 		void inline null_init();
 	};
 } // namespace wood

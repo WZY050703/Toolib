@@ -37,8 +37,15 @@ This project is coded, checked and pulled all in VS. And it used the module whic
 
 `const char* err()` -> Get the information of err. And reset the err flag.
 
+#### New Added
+`setMemModel(int model)` -> Set the memory model for reading, 0 is the normal large end-order model (default), 1 is the local small end-order model (single unsigned char) internal.
+
+For example: 0x64(0110 0100) is considered to be 0010 0110 from low to high bit order in mode 0, while mode 1 would consider it 0110 0100.
+
+Note: This was written for Base64, so the write method is not adapted yet.
+
+
 ### EDcode
 Some funcs do code. Now there just have `ToBase64`.
 
-**Warning**: For some problem, the func `ToCBace64()` is not work in the way of Base64, but a new way.
-(It read data streamly from low bit to high bit, not as the true Base64.)
+Note: implementations will not complement the “=” at the end, except for those whose arguments are `const char* str,unsigned char* buffer, int MaxLen`.

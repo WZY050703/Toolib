@@ -6,8 +6,7 @@ namespace wood {
 	{
 		this->size = 0;
 		this->arryp = nullptr;
-		this->isgood = true;
-		this->errnum = 0;
+		this->statusnum = 0x4;//err_flag = true
 	}
 
 	bitarry::bitarry()
@@ -33,6 +32,7 @@ namespace wood {
 	{
 		this->size = obj.size;
 		this->arryp = new unsigned char[this->size / 8];
+		this->statusnum = obj.statusnum;
 		for (int i = 0;i < this->size / 8;i++)
 			this->arryp[i] = obj.arryp[i];
 	}
@@ -41,6 +41,7 @@ namespace wood {
 	{
 		this->size = obj.size;
 		this->arryp = obj.arryp;
+		this->statusnum = obj.statusnum;
 		obj.arryp = nullptr;//转移所有权，只能一人所有
 		obj.size = 0;
 	}
@@ -63,12 +64,16 @@ namespace wood {
 			return false;
 	}
 
+	void bitarry::setMemModel(int model)
+	{
+		this->statusnum = wood::bitWrite(this->statusnum, 0, 2, (unsigned int)model);
+	}
+
 	bitarry bitarry::read(const size_t v, const int len)
 	{
 		if (v >= this->size || v < 0)//标位超出数据块
 		{
-			this->isgood = false;
-			this->errnum = 1;
+			this->statusnum=wood::bitWrite(this->statusnum, 2, (int)sizeof(unsigned int) - 2, 0x2u);//bit :10
 			return bitarry();//异常返回
 		}
 		int pi = v % 8, rei = 0;//bit位指针
@@ -76,6 +81,7 @@ namespace wood {
 		buffer[len / 8] = 0;//初始化
 		int ci, rci;//下标索引标识
 		unsigned char bc1 = 0, bc2 = 0;//分两段的字读取buffer
+		bool bit_turn_flag = (bool)wood::bitRead(this->statusnum, 0, 2);
 		for (rei;rei < len;rei+=8)
 		{
 			ci = (v + rei) / 8;
@@ -85,28 +91,31 @@ namespace wood {
 				int tmplen = len;
 				if (len + v > this->size)//读取的超出数据块(不然就是没超出，正常尾处理)
 					tmplen = this->size - v;//设置只读取完数据
-				buffer[rci] = wood::bitRead(this->arryp[ci], pi, tmplen-rei);
+				/*int tmp_DB = (bit_turn_flag) ? (8 - tmplen + rei) : (tmplen - rei);
+				std::cerr << "[DB:read()]:statusnum=" << this->statusnum << ", flag=" << bit_turn_flag << ", tmp_DB=" << tmp_DB << ", ans=" << (tmplen - rei) << "\n";*///DeBuG
+				bc1 = wood::bitRead(this->arryp[ci], (bit_turn_flag) ? (8 - pi - (tmplen - rei)) : pi, tmplen - rei);//读取的长度一致，位置相反
+				buffer[rci] = bc1;
 				break;
 			}
 			if (rei + 8 > len)//要读的不满8bit,但没到数据末端
 			{
 				if (len - rei <= 8 - pi)//不跨位
 				{
-					bc1 = wood::bitRead(this->arryp[ci], pi, len - rei);
+					bc1 = wood::bitRead(this->arryp[ci], (bit_turn_flag) ? (8 - pi - (len - rei)) : pi, len - rei);
 					bc2 = 0;
+					buffer[rci] = bc1;
 				}
 				else//跨位
 				{
-					bc1 = wood::bitRead(this->arryp[ci], pi, 8 - pi);
-					bc2 = wood::bitRead(this->arryp[ci + 1], 0, (len - rei) - (8 - pi));//读取剩下要读的
+					bc1 = wood::bitRead(this->arryp[ci], (bit_turn_flag) ? (8 - pi - (8 - pi)) : pi, 8 - pi);
+					bc2 = wood::bitRead(this->arryp[ci + 1], (bit_turn_flag) ? (8 - 0 - ((len - rei) - (8 - pi))) : 0, (len - rei) - (8 - pi));//读取剩下要读的
+					buffer[rci] = (bit_turn_flag) ? (bc2 | (bc1 << ((len - rei) - (8 - pi)))) : (bc1 | (bc2 << (8 - pi)));
 				}
-				
-				buffer[rci] = bc1 | (bc2 << (8 - pi));
 				break;
 			}
-			bc1 = wood::bitRead(this->arryp[ci], pi, 8 - pi);
-			bc2 = wood::bitRead(this->arryp[ci + 1], 0, pi);
-			buffer[rci] = bc1 | (bc2 << (8 - pi));
+			bc1 = wood::bitRead(this->arryp[ci], (bit_turn_flag) ? (8 - pi - (8 - pi)) : pi, 8 - pi);
+			bc2 = wood::bitRead(this->arryp[ci + 1], (bit_turn_flag) ? (8 - 0 - pi) : 0, pi);
+			buffer[rci] = (bit_turn_flag) ? (bc2 | (bc1 << pi)) : (bc1 | (bc2 << (8 - pi)));//存放的顺序也不同
 		}
 		wood::bitarry re(buffer, len / 8 + 1);
 		//std::cout << buffer << std::endl;//DeBug
@@ -118,8 +127,7 @@ namespace wood {
 	{
 		if (v >= this->size || v < 0)
 		{
-			this->isgood = false;
-			this->errnum = 2;
+			this->statusnum = wood::bitWrite(this->statusnum, 2, (int)sizeof(unsigned int) - 2, 0x4u);//bit: 100
 			return false;//越界返回
 		}
 		int pi = v % 8, rei = 0;//相对比特位，data数据位
@@ -168,8 +176,7 @@ namespace wood {
 	{
 		if (CHD >= 3)
 		{
-			this->isgood = false;
-			this->errnum = 0;
+			this->statusnum = wood::bitWrite(this->statusnum, 2, (int)sizeof(unsigned int) - 2, 0x0u);//bit: 00
 			std::cerr << bitarry_Errs[0] << std::endl;
 			return;
 		}
@@ -202,17 +209,24 @@ namespace wood {
 		return;
 	}
 
+	void bitarry::setMermey(const unsigned char* data, int v, int len)
+	{
+		for (int i = 0;(v + i < this->size / 8) && (i < len);i++)
+			this->arryp[v + i] = data[i];
+		return;
+	}
+
 	bool bitarry::good()const
 	{
-		return this->isgood;
+		return (bool)wood::bitRead(this->statusnum, 2, 1);
 	}
 
 	const char* bitarry::err()
 	{
-		if (this->isgood == false)
+		if (this->good() == false)
 		{
-			this->isgood = true;//恢复标志
-			return bitarry_Errs[this->errnum];
+			this->statusnum = wood::bitWrite(this->statusnum, 2, 1, 0x1u);//恢复标志
+			return bitarry_Errs[wood::bitRead(this->statusnum, 2, (int)sizeof(unsigned int) - 2)];
 		}
 		return nullptr;
 	}

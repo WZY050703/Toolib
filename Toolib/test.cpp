@@ -4,8 +4,9 @@ import WoodTools;
 int main()
 {
 	using namespace std;
-	char si[4] = {'a'};
-	wood::bitarry re= wood::ToCBase64(si, 1);
+	char si[] = "qweas";
+	//wood::bitarry re= wood::ToBase64(wood::bitarry((const unsigned char*)si, 5));
+	wood::bitarry re = wood::ToBase64(si, 5);
 	re.Print(0);
 	cout << endl;
 	re.Print(1);
