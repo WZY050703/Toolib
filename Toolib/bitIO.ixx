@@ -24,13 +24,13 @@ namespace wood
     export class bitarry {
 	public:
 		bitarry();
-		bitarry(const size_t size);
+		explicit bitarry(const size_t size);//禁止隐式转换调用构造函数
 		bitarry(const unsigned char* arry, const size_t len);//从数组快速构建
 		bitarry(const bitarry& obj);//拷贝构造函数
 		bitarry(bitarry&& obj);//移动构造函数
 		~bitarry();
 		bool setSize(const size_t bitsize);//仅仅用于定义声明时没申请内存的状况
-		void setMemModel(int model);//0:normal, 1:turned bit
+		bitarry setMemModel(int model);//0:normal, 1:turned bit
 		bitarry read(const size_t v, const int len);
 		bool write(const size_t v, const int len, wood::bitarry bdata);
 		bool write(const size_t v, const int len, const char* data);
@@ -38,8 +38,8 @@ namespace wood
 		void Print(unsigned short CHD);
 		const unsigned char* c_str()const;
 		const size_t resize()const;
-		void setMermey(const unsigned char data);
-		void setMermey(const unsigned char* data, int v, int len);
+		bitarry setMermey(const unsigned char data);
+		bitarry setMermey(const unsigned char* data, int v, int len);
 		bool good()const;
 		const char* err();
 

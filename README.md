@@ -4,7 +4,7 @@
  [English](README_en.md)
 
 ## 写在前面
-本项目的编码、检查和调用全部在 VS 中完成。它使用了在 C++23 中添加的模块，因此请检查您的设置。
+本项目的编码、检查和调用全部在 VS 中完成。它使用了在 C++23 中添加的模块，因此请检查您的设置。它的文件编码是GB 2312，因此有些批注显示并不正常。
 
 **我不能保证它是安全的。**
 
@@ -33,16 +33,23 @@
 
 `const size_t resize()const` -> 返回数组的大小。
 
-`void setMermey(const unsigned char data)` -> 根据数据设置数组。
+`bitarry setMermey(const unsigned char data)` -> 根据数据设置数组。
 
 `bool good()const` -> 检查是否发生错误。
 
 `const char* err()`> 获取错误信息。并重置错误标志。
 
 #### 新增
-`setMemModel(int model)` -> 设置读取的内存模型，0为正常的大端序模型（默认），1为局部小端序模型（单个unsigned char）内部。
+`bitarry setMemModel(int model)` -> 设置读取的内存模型，0为正常的大端序模型（默认），1为局部小端序模型（单个unsigned char）内部。
 
 例如：0x64(0110 0100)在模式0下被认为从低到高比特位依次是0010 0110，而模式1会认为它是0110 0100。但是不影响整体的储存，比如char str={'a','b'}在两种模式下均为str\[0\]='a',str\[1\]='b'。
+
+#### 变化
+* 现在null对象通过`c_str()`返回指针不会是nullptr了，而是一个指向“\0”的指针。
+
+* 现在`bitarry(const size_t size)`构造函数使用`explicit`限制其不会被隐式调用。
+
+* 现在`setMemModel`和`setMermey`都会返回自身了，以支持链式调用。
 
 ### EDcode
 一些编码的函数。现在只有 `ToBase64`的几种实现和`FromBase64`的实现。

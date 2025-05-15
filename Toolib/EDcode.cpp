@@ -108,10 +108,7 @@ namespace wood {
         for (size_t i = 0; i < slen; i++)
         {
             unsigned char tmpc = get_base64_num(sstr[i]) << 2;
-            //recBuffer.write(i * 6, 6, tmpc);//what fuck?
-            wood::bitarry tmpb(&tmpc, 1);
-            tmpb.setMemModel(1);
-            recBuffer.write(i * 6, 6, tmpb);
+            recBuffer.write(i * 6, 6, wood::bitarry(&tmpc, 1).setMemModel(1));
         }
         return recBuffer;
     }

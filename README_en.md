@@ -2,7 +2,7 @@
 Some tool libs used by myself.
 
 ## Write before
-This project is coded, checked and pulled all in VS. And it used the module which is add in C++23, so check your settings.
+This project is coded, checked and pulled all in VS. And it used the module which is add in C++23, so check your settings. Its document encoding is GB 2312, so some annotations are displayed abnormally.
 
 **I can't promise it is safe.**
 
@@ -31,17 +31,23 @@ This project is coded, checked and pulled all in VS. And it used the module whic
 
 `const size_t resize()const` -> return size of array.
 
-`void setMermey(const unsigned char data)` -> Set array by data.
+`bitarry setMermey(const unsigned char data)` -> Set array by data.
 
 `bool good()const` -> Check if any error happend.
 
 `const char* err()` -> Get the information of err. And reset the err flag.
 
 #### New Added
-`setMemModel(int model)` -> Set the memory model for reading, 0 is the normal large end-order model (default), 1 is the local small end-order model (single unsigned char) internal.
+`bitarry setMemModel(int model)` -> Set the memory model for reading, 0 is the normal large end-order model (default), 1 is the local small end-order model (single unsigned char) internal.
 
 For example: 0x64 (0110 0100) is considered as 0010 0110 from low to high bits in mode 0, while mode 1 recognizes it as 0110 0100. However, this does not affect the overall storage, for instance, char str={'a','b'} would still result in str\[0\]='a', str\[1\]='b' in both modes.
 
+#### Change 
+* Now the null object returns a pointer through `c_str()` that is no longer nullptr, but rather a pointer pointing to "\0".
+
+* The `bitarry(const size_t size)` constructor now uses `explicit` to prevent it from being called implicitly.
+
+* Now `setMemModel` and `setMermey` both return themselves to support chain calling.
 
 ### EDcode
 Some encoded functions. Currently, there are only a few implementations of `ToBase64` and the implementation of `FromBase64`.

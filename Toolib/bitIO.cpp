@@ -64,9 +64,10 @@ namespace wood {
 			return false;
 	}
 
-	void bitarry::setMemModel(int model)
+	bitarry bitarry::setMemModel(int model)
 	{
 		this->statusnum = wood::bitWrite(this->statusnum, 0, 2, (unsigned int)model);
+		return *this;
 	}
 
 	bitarry bitarry::read(const size_t v, const int len)
@@ -203,18 +204,18 @@ namespace wood {
 		return this->size;
 	}
 
-	void bitarry::setMermey(const unsigned char data)
+	bitarry bitarry::setMermey(const unsigned char data)
 	{
 		for (int i = 0;i < this->size / 8;i++)
 			this->arryp[i] = data;
-		return;
+		return *this;
 	}
 
-	void bitarry::setMermey(const unsigned char* data, int v, int len)
+	bitarry bitarry::setMermey(const unsigned char* data, int v, int len)
 	{
 		for (int i = 0;(v + i < this->size / 8) && (i < len);i++)
 			this->arryp[v + i] = data[i];
-		return;
+		return *this;
 	}
 
 	bool bitarry::good()const
