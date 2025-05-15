@@ -40,12 +40,10 @@ This project is coded, checked and pulled all in VS. And it used the module whic
 #### New Added
 `setMemModel(int model)` -> Set the memory model for reading, 0 is the normal large end-order model (default), 1 is the local small end-order model (single unsigned char) internal.
 
-For example: 0x64(0110 0100) is considered to be 0010 0110 from low to high bit order in mode 0, while mode 1 would consider it 0110 0100.
-
-Note: This was written for Base64, so the write method is not adapted yet.
+For example: 0x64 (0110 0100) is considered as 0010 0110 from low to high bits in mode 0, while mode 1 recognizes it as 0110 0100. However, this does not affect the overall storage, for instance, char str={'a','b'} would still result in str\[0\]='a', str\[1\]='b' in both modes.
 
 
 ### EDcode
-Some funcs do code. Now there just have `ToBase64`.
+Some encoded functions. Currently, there are only a few implementations of `ToBase64` and the implementation of `FromBase64`.
 
 Note: implementations will not complement the “=” at the end, except for those whose arguments are `const char* str,unsigned char* buffer, int MaxLen`.

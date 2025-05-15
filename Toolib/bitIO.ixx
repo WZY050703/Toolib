@@ -19,6 +19,8 @@ namespace wood
 		"ERR[bitarry.write()]:Position out of data block.\n"
 	};
 
+	const unsigned char __null_str[1] = { '\0' };
+
     export class bitarry {
 	public:
 		bitarry();

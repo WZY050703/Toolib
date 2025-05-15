@@ -73,4 +73,56 @@ namespace wood {
     {
         return wood::ToBase64(wood::bitarry((const unsigned char*)str, len));
     }
+
+    wood::bitarry ToBase64(const unsigned char* str, int len)
+    {
+        return wood::ToBase64(wood::bitarry(str, len));
+    }
+
+    unsigned char get_base64_num(const char cc)
+    {
+        unsigned char renum = 0;
+        if ('A' <= cc && cc <= 'Z')
+            renum = cc - 'A';
+        else if('a'<=cc && cc<='z')
+            renum = cc - 'a' + 26;
+        else if('0'<=cc && cc<='9')
+            renum = cc - '0' + 26 * 2;
+        else if('+'==cc)
+            renum = 26 * 2 + 10;
+        else if ('/' == cc)
+            renum = 26 * 2 + 10 + 1;
+        else
+            renum = 0;
+        return renum;
+    }
+
+    wood::bitarry FromBase64(wood::bitarry str)
+    {
+        size_t slen = str.resize() / 8;
+        const unsigned char* sstr = str.c_str();
+        size_t len = slen * 6 + 8;
+        wood::bitarry recBuffer(len);
+        recBuffer.setMermey(0u);
+        recBuffer.setMemModel(1);//ÉèÖÃÄ£Ê½
+        for (size_t i = 0; i < slen; i++)
+        {
+            unsigned char tmpc = get_base64_num(sstr[i]) << 2;
+            //recBuffer.write(i * 6, 6, tmpc);//what fuck?
+            wood::bitarry tmpb(&tmpc, 1);
+            tmpb.setMemModel(1);
+            recBuffer.write(i * 6, 6, tmpb);
+        }
+        return recBuffer;
+    }
+
+    wood::bitarry FromBase64(const char* str, int len)
+    {
+        return wood::FromBase64(wood::bitarry((const unsigned char*)str, len));
+    }
+
+    wood::bitarry FromBase64(const unsigned char* str, int len)
+    {
+        return wood::FromBase64(wood::bitarry(str, len));
+    }
 }

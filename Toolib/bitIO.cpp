@@ -81,7 +81,7 @@ namespace wood {
 		buffer[len / 8] = 0;//初始化
 		int ci, rci;//下标索引标识
 		unsigned char bc1 = 0, bc2 = 0;//分两段的字读取buffer
-		bool bit_turn_flag = (bool)wood::bitRead(this->statusnum, 0, 2);
+		bool bit_turn_flag = (bool)wood::bitRead(this->statusnum, 0, 1);
 		for (rei;rei < len;rei+=8)
 		{
 			ci = (v + rei) / 8;
@@ -132,6 +132,7 @@ namespace wood {
 		}
 		int pi = v % 8, rei = 0;//相对比特位，data数据位
 		int ci;//下标索引标识
+		bool bit_turn_flag = (bool)wood::bitRead(this->statusnum, 0, 1);
 		for (rei;rei < len;rei += 8)
 		{
 			ci = (v + rei) / 8;
@@ -140,24 +141,24 @@ namespace wood {
 				int tmplen = len;
 				if (len + v > this->size)//写的超出数据块(不然就是没超出，正常尾处理)
 					tmplen = this->size - v;//设置只写完剩下能写的数据
-				this->arryp[ci] = wood::bitWrite(this->arryp[ci], pi, tmplen - rei, bdata.read(rei, tmplen - rei).c_str()[0]);
+				this->arryp[ci] = wood::bitWrite(this->arryp[ci], (bit_turn_flag) ? (8 - pi - (tmplen - rei)) : pi, tmplen - rei, bdata.read(rei, tmplen - rei).c_str()[0]);
 				break;
 			}
 			if (rei + 8 > len)//要写的不满8bit,但没到数据末端
 			{
 				if (len - rei <= 8 - pi)//不跨位
 				{
-					this->arryp[ci] = wood::bitWrite(this->arryp[ci], pi, len - rei, bdata.read(rei, len - rei).c_str()[0]);
+					this->arryp[ci] = wood::bitWrite(this->arryp[ci], (bit_turn_flag) ? (8 - pi - (len - rei)) : pi, len - rei, bdata.read(rei, len - rei).c_str()[0]);
 				}
 				else//跨位
 				{
-					this->arryp[ci] = wood::bitWrite(this->arryp[ci], pi, 8 - pi, bdata.read(rei, 8 - pi).c_str()[0]);
-					this->arryp[ci + 1] = wood::bitWrite(this->arryp[ci + 1], 0, (len - rei) - (8 - pi), bdata.read(rei + 8 - pi, (len - rei) - (8 - pi)).c_str()[0]);
+					this->arryp[ci] = wood::bitWrite(this->arryp[ci], (bit_turn_flag) ? (8 - pi - (8 - pi)) : pi, 8 - pi, bdata.read(rei, 8 - pi).c_str()[0]);
+					this->arryp[ci + 1] = wood::bitWrite(this->arryp[ci + 1], (bit_turn_flag) ? (8 - 0 - ((len - rei) - (8 - pi))) : 0, (len - rei) - (8 - pi), bdata.read(rei + 8 - pi, (len - rei) - (8 - pi)).c_str()[0]);
 				}
 				break;
 			}
-			this->arryp[ci] = wood::bitWrite(this->arryp[ci], pi, 8 - pi, bdata.read(rei, 8 - pi).c_str()[0]);
-			this->arryp[ci + 1] = wood::bitWrite(this->arryp[ci + 1], 0, pi, bdata.read(rei + 8 - pi, pi).c_str()[0]);
+			this->arryp[ci] = wood::bitWrite(this->arryp[ci], (bit_turn_flag) ? (8 - pi - (8 - pi)) : pi, 8 - pi, bdata.read(rei, 8 - pi).c_str()[0]);
+			this->arryp[ci + 1] = wood::bitWrite(this->arryp[ci + 1], (bit_turn_flag) ? (8 - 0 - pi) : 0, pi, bdata.read(rei + 8 - pi, pi).c_str()[0]);
 		}
 		return true;
 	}
@@ -194,7 +195,7 @@ namespace wood {
 
 	const unsigned char* bitarry::c_str()const 
 	{
-		return this->arryp;
+		return (this->arryp == nullptr) ? __null_str : this->arryp;
 	}
 
 	const size_t bitarry::resize()const

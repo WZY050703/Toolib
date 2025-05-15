@@ -4,15 +4,16 @@ import WoodTools;
 int main()
 {
 	using namespace std;
+	wood::bitarry anull;
+	cout << anull.c_str() << endl;
 	char si[] = "qweas";
-	//wood::bitarry re= wood::ToBase64(wood::bitarry((const unsigned char*)si, 5));
-	wood::bitarry re = wood::ToBase64(si, 5);
-	re.Print(0);
+	wood::bitarry bs64 = wood::ToBase64(si, 5);
+	cout << "base64: ";
+	bs64.Print(0);
 	cout << endl;
-	re.Print(1);
+	wood::bitarry res = wood::FromBase64("cXdlYXM=", 8);
+	cout << "str: ";
+	res.Print(0);
 	cout << endl;
-	re.Print(5);
-	cout << re.good() << endl << re.err() << endl;
-	cout << re.good() << endl;
 	return 0;
 }
