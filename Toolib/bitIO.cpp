@@ -233,4 +233,15 @@ namespace wood {
 		}
 		return nullptr;
 	}
+
+	bool bitarry::operator[](const int v)
+	{
+		if (v >= this->size || v < 0)
+		{
+			this->statusnum = wood::bitWrite(this->statusnum, err_flag, 1, statu_err);
+			this->statusnum = wood::bitWrite(this->statusnum, err_num_flag, (int)(sizeof(unsigned int) * 8 - err_num_flag), statu_err_num(3));
+			return false;//Ô½½ç·µ»Ø
+		}
+		return (bool)wood::bitRead(this->arryp[v / 8], v, 1);
+	}
 }

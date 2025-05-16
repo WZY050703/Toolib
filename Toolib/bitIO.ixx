@@ -16,7 +16,8 @@ namespace wood
 	const char bitarry_Errs[][80] = {
 		"ERR[bitarry.Print()]:Wrong print moduel.\n",
 		"ERR[bitarry.read()]:Position out of data block.\n",
-		"ERR[bitarry.write()]:Position out of data block.\n"
+		"ERR[bitarry.write()]:Position out of data block.\n",
+		"ERR[bitarry[]]:Position out of data block.\n"
 	};
 
 	const unsigned char __null_str[1] = { '\0' };
@@ -52,6 +53,7 @@ namespace wood
 		bitarry setMermey(const unsigned char* data, int v, int len);
 		bool good()const;
 		const char* err();
+		bool operator[](const int v);
 
 	private:
 		size_t size;

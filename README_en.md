@@ -38,9 +38,11 @@ This project is coded, checked and pulled all in VS. And it used the module whic
 `const char* err()` -> Get the information of err. And reset the err flag.
 
 #### New Added
-`bitarry setMemModel(int model)` -> Set the memory model for reading, 0 is the normal large end-order model (default), 1 is the local small end-order model (single unsigned char) internal.
+* `bitarry setMemModel(int model)` -> Set the memory model for reading, 0 is the normal large end-order model (default), 1 is the local small end-order model (single unsigned char) internal.
 
 For example: 0x64 (0110 0100) is considered as 0010 0110 from low to high bits in mode 0, while mode 1 recognizes it as 0110 0100. However, this does not affect the overall storage, for instance, char str={'a','b'} would still result in str\[0\]='a', str\[1\]='b' in both modes.
+
+* `[]`Support subscript index to read data.
 
 #### Change 
 * Now the null object returns a pointer through `c_str()` that is no longer nullptr, but rather a pointer pointing to "\0".

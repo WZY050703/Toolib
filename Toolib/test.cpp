@@ -23,6 +23,11 @@ int main()
 	cout << res.good() << ":" << res.err() << endl;
 	res.Print(5);
 	cout << res.good() << ":" << res.err() << endl;
+	
+	cout << "res[0]=" << res[0] << endl;
+	res[100];
+	cout << res.good() << ":" << res.err() << endl;
+
 	cout << res.good();
 	return 0;
 }
