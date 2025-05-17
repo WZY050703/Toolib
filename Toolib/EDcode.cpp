@@ -26,11 +26,6 @@ namespace wood {
 				if (j * 6 <= 8 * (len - i)) // 非无数据段
 				{
 					buffer[k + j] = wood::__BASE64[wood::bitRead(stmp, 24 - (j + 1) * 6, 6)];
-					/*
-					//debug
-					unsigned int pk = wood::bitRead(stmp, 24 - (j + 1) * 6, 6);
-					std::cout << pk << "\t" << wood::__BASE64[pk] << std::endl;
-					*/
 				}
 				else                     // 无数据填充
 					buffer[k + j] = '='; // 也可以填完后把末尾A替换为=
@@ -45,30 +40,91 @@ namespace wood {
 		return isfinish;
 	}
 
-	wood::bitarry ToBase64(wood::bitarry str)
+	wood::bitarry ToBase2X(const int x, wood::bitarry str, const char* BASEX_List)
 	{
+		if (x >= 8)//基值异常返回
+		{
+			return wood::bitarry();
+		}
 		str.setMemModel(statu_memMod_one);//设置模式
 		size_t ssize = str.resize();
-		size_t len = ssize / 6 + 1 + 1;
+		size_t len = ssize / x + 1 + 1;
 		unsigned char* recBuffer = new unsigned char[len];
 		recBuffer[len - 1] = 0;//封闭位，形成字符串
 		recBuffer[len - 2] = 0;//次封闭位，若用不到则置0
-		for (size_t i = 0;i < len - 1;i++)
+		for (size_t i = 0; i < len - 1; i++)
 		{
-			//str.read(ssize - i * 6, 6);//debug
-			//std::cout << i << "," << (uint8_t)str.read(i * 6, 6).c_str() << std::endl;
-			if ((i + 1) * 6 <= ssize)
-				recBuffer[i] = __BASE64[str.read(i * 6, 6).c_str()[0]];
+			if ((i + 1) * x <= ssize)
+				recBuffer[i] = BASEX_List[str.read(i * x, x).c_str()[0]];
 			else
 			{
-				if (i * 6 < ssize)//读取剩下的
-					recBuffer[i] = __BASE64[str.read(i * 6, ssize - i * 6).c_str()[0] << (6 - (ssize - i * 6))];//位移相当于补0
+				if (i * x < ssize)//读取剩下的
+					recBuffer[i] = BASEX_List[str.read(i * x, ssize - i * x).c_str()[0] << (x - (ssize - i * x))];//位移相当于补0
 				break;
 			}
 		}
 		wood::bitarry reba(recBuffer, len);
 		delete[] recBuffer;
 		return reba;
+	}
+
+	wood::bitarry ToBase2X(const int x, const char* str, const int len, const char* BASEX_List)
+	{
+		return wood::ToBase2X(x, wood::bitarry((const unsigned char*)str, len), BASEX_List);
+	}
+
+	wood::bitarry ToBase2X(const int x, const unsigned char* str, const int len, const char* BASEX_List)
+	{
+		return wood::ToBase2X(x, wood::bitarry(str, len), BASEX_List);
+	}
+
+	unsigned char get_base2X_num(const int x, const char cc, const char* BASEX_List)
+	{
+		unsigned char renum = 0;
+		for (int i = 0; i < pow(2, x); i++)
+		{
+			if (BASEX_List[i] == cc)
+			{
+				renum = i;
+				break;
+			}
+		}
+		return renum;
+	}
+
+	wood::bitarry FromBase2X(const int x, wood::bitarry str, const char* BASEX_List)
+	{
+		if (x >= 8)//基值异常返回
+		{
+			return wood::bitarry();
+		}
+		size_t slen = str.resize() / 8;
+		const unsigned char* sstr = str.c_str();
+		size_t len = slen * x + 8;
+		wood::bitarry recBuffer(len);
+		recBuffer.setMermey(0u);
+		recBuffer.setMemModel(statu_memMod_one);//设置模式
+		for (size_t i = 0; i < slen; i++)
+		{
+			unsigned char tmpc = get_base2X_num(x, sstr[i], BASEX_List) << (8 - x);
+			recBuffer.write(i * x, x, wood::bitarry(&tmpc, 1).setMemModel(statu_memMod_one));
+		}
+		return recBuffer;
+	}
+
+	wood::bitarry FromBase2X(const int x, const char* str, const int len, const char* BASEX_List)
+	{
+		return wood::FromBase2X(x, wood::bitarry((const unsigned char*)str, len), BASEX_List);
+	}
+
+	wood::bitarry FromBase2X(const int x, const unsigned char* str, const int len, const char* BASEX_List)
+	{
+		return wood::FromBase2X(x, wood::bitarry(str, len), BASEX_List);
+	}
+
+	wood::bitarry ToBase64(wood::bitarry str)
+	{
+		return ToBase2X(6, str, __BASE64);
 	}
 
 	wood::bitarry ToBase64(const char* str, int len)
@@ -127,26 +183,7 @@ namespace wood {
 
 	wood::bitarry ToBase32(wood::bitarry str)
 	{
-		str.setMemModel(statu_memMod_one);//设置模式
-		size_t ssize = str.resize();
-		size_t len = ssize / 5 + 1 + 1;
-		unsigned char* recBuffer = new unsigned char[len];
-		recBuffer[len - 1] = 0;//封闭位，形成字符串
-		recBuffer[len - 2] = 0;//次封闭位，若用不到则置0
-		for (size_t i = 0; i < len - 1; i++)
-		{
-			if ((i + 1) * 5 <= ssize)
-				recBuffer[i] = __BASE32[str.read(i * 5, 5).c_str()[0]];
-			else
-			{
-				if (i * 5 < ssize)//读取剩下的
-					recBuffer[i] = __BASE32[str.read(i * 5, ssize - i * 5).c_str()[0] << (5 - (ssize - i * 5))];//位移相当于补0
-				break;
-			}
-		}
-		wood::bitarry reba(recBuffer, len);
-		delete[] recBuffer;
-		return reba;
+		return ToBase2X(5, str, __BASE32);
 	}
 
 	wood::bitarry ToBase32(const char* str, int len)

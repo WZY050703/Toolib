@@ -54,7 +54,11 @@ For example: 0x64 (0110 0100) is considered as 0010 0110 from low to high bits i
 ### EDcode
 Some encoded functions.
 
+* `ToBase2X` and `FromBase2X`, these functions can customize the number of bits and character tables of the grouping, which is equivalent to $Base2^x$, e.g. passing in 5 is equivalent to Base32 (in the case of the same character table).
+
+**Warning: Please make sure the character table is long enough, these functions will not check if the character table is long enough.**
+
 * Implementations of `ToBase64` and `FromBase64`.
 * Implementations of `ToBase32` and `FromBase32`.
 
-Note: implementations will not complement the “=” at the end, except for those whose arguments are `const char* str,unsigned char* buffer, int MaxLen`.
+Note: implementations will not complement the “=” at the end, except for `ToBase64(const char* str, unsigned char* buffer, int MaxLen)`.

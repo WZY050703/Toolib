@@ -56,7 +56,11 @@
 ### EDcode
 一些编码的函数。
 
+* `ToBase2X`和`FromBase2X`的实现，这些函数可以自定义分组的位数和字符表，等效于$Base2^x$，比如传入5就等效于Base32（在字符表一致的情况下）。
+
+**警告：请确保字符表足够长，这些函数不会检查字符表是否足够长。**
+
 * `ToBase64`和`FromBase64`的实现。
 * `ToBase32`和`FromBase32`的实现。
 
-注意：除了参数为`const char* str,unsigned char* buffer, int MaxLen`的实现，其他实现不会补充末尾的"="。
+注意：除了实现`ToBase64(const char* str, unsigned char* buffer, int MaxLen)`，其他实现不会补充末尾的"="。
