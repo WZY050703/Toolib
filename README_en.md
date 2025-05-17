@@ -52,6 +52,9 @@ For example: 0x64 (0110 0100) is considered as 0010 0110 from low to high bits i
 * Now `setMemModel` and `setMermey` both return themselves to support chain calling.
 
 ### EDcode
-Some encoded functions. Currently, there are only a few implementations of `ToBase64` and the implementation of `FromBase64`.
+Some encoded functions.
+
+* Implementations of `ToBase64` and `FromBase64`.
+* Implementations of `ToBase32` and `FromBase32`.
 
 Note: implementations will not complement the “=” at the end, except for those whose arguments are `const char* str,unsigned char* buffer, int MaxLen`.

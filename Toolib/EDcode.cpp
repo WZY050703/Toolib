@@ -4,6 +4,8 @@ import :bitIO;
 
 namespace wood {
 	const char __BASE64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	const char __BASE32[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+
 	bool ToBase64(const char* str, unsigned char* buffer, int MaxLen)
 	{
 		int len = strlen(str);
@@ -107,7 +109,7 @@ namespace wood {
 		recBuffer.setMemModel(statu_memMod_one);//设置模式
 		for (size_t i = 0; i < slen; i++)
 		{
-			unsigned char tmpc = get_base64_num(sstr[i]) << 2;
+			unsigned char tmpc = get_base64_num(sstr[i]) << (8 - 6);
 			recBuffer.write(i * 6, 6, wood::bitarry(&tmpc, 1).setMemModel(statu_memMod_one));
 		}
 		return recBuffer;
@@ -121,5 +123,77 @@ namespace wood {
 	wood::bitarry FromBase64(const unsigned char* str, int len)
 	{
 		return wood::FromBase64(wood::bitarry(str, len));
+	}
+
+	wood::bitarry ToBase32(wood::bitarry str)
+	{
+		str.setMemModel(statu_memMod_one);//设置模式
+		size_t ssize = str.resize();
+		size_t len = ssize / 5 + 1 + 1;
+		unsigned char* recBuffer = new unsigned char[len];
+		recBuffer[len - 1] = 0;//封闭位，形成字符串
+		recBuffer[len - 2] = 0;//次封闭位，若用不到则置0
+		for (size_t i = 0; i < len - 1; i++)
+		{
+			if ((i + 1) * 5 <= ssize)
+				recBuffer[i] = __BASE32[str.read(i * 5, 5).c_str()[0]];
+			else
+			{
+				if (i * 5 < ssize)//读取剩下的
+					recBuffer[i] = __BASE32[str.read(i * 5, ssize - i * 5).c_str()[0] << (5 - (ssize - i * 5))];//位移相当于补0
+				break;
+			}
+		}
+		wood::bitarry reba(recBuffer, len);
+		delete[] recBuffer;
+		return reba;
+	}
+
+	wood::bitarry ToBase32(const char* str, int len)
+	{
+		return wood::ToBase32(wood::bitarry((const unsigned char*)str, len));
+	}
+
+	wood::bitarry ToBase32(const unsigned char* str, int len)
+	{
+		return wood::ToBase32(wood::bitarry(str, len));
+	}
+
+	unsigned char get_base32_num(const char cc)
+	{
+		unsigned char renum = 0;
+		if ('A' <= cc && cc <= 'Z')
+			renum = cc - 'A';
+		else if ('2' <= cc && cc <= '7')
+			renum = cc - '2' + 26;
+		else
+			renum = 0;
+		return renum;
+	}
+
+	wood::bitarry FromBase32(wood::bitarry str)
+	{
+		size_t slen = str.resize() / 8;
+		const unsigned char* sstr = str.c_str();
+		size_t len = slen * 5 + 8;
+		wood::bitarry recBuffer(len);
+		recBuffer.setMermey(0u);
+		recBuffer.setMemModel(statu_memMod_one);//设置模式
+		for (size_t i = 0; i < slen; i++)
+		{
+			unsigned char tmpc = get_base32_num(sstr[i]) << (8 - 5);
+			recBuffer.write(i * 5, 5, wood::bitarry(&tmpc, 1).setMemModel(statu_memMod_one));
+		}
+		return recBuffer;
+	}
+
+	wood::bitarry FromBase32(const char* str, int len)
+	{
+		return wood::FromBase32(wood::bitarry((const unsigned char*)str, len));
+	}
+
+	wood::bitarry FromBase32(const unsigned char* str, int len)
+	{
+		return wood::FromBase32(wood::bitarry(str, len));
 	}
 }

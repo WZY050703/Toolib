@@ -9,4 +9,10 @@ namespace wood {
 	export wood::bitarry FromBase64(wood::bitarry str);
 	export wood::bitarry FromBase64(const char* str, int len);
 	export wood::bitarry FromBase64(const unsigned char* str, int len);
+	export wood::bitarry ToBase32(wood::bitarry str);
+	export wood::bitarry ToBase32(const char* str, int len);
+	export wood::bitarry ToBase32(const unsigned char* str, int len);
+	export wood::bitarry FromBase32(wood::bitarry str);
+	export wood::bitarry FromBase32(const char* str, int len);
+	export wood::bitarry FromBase32(const unsigned char* str, int len);
 }

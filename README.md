@@ -54,6 +54,9 @@
 * 现在`setMemModel`和`setMermey`都会返回自身了，以支持链式调用。
 
 ### EDcode
-一些编码的函数。现在只有 `ToBase64`的几种实现和`FromBase64`的实现。
+一些编码的函数。
+
+* `ToBase64`和`FromBase64`的实现。
+* `ToBase32`和`FromBase32`的实现。
 
 注意：除了参数为`const char* str,unsigned char* buffer, int MaxLen`的实现，其他实现不会补充末尾的"="。
