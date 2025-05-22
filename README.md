@@ -16,7 +16,7 @@
 #### init
 `bitarry()` -> 创建一个没有任何数据的空对象。
 
-`bitarry(const size_t size)` -> 创建一个有 \<size\> 位（8 位对齐）的数组。
+`bitarry(const size_t size)` -> 创建一个有 \<size\> 位（8 位对齐）的数组。使用`explicit`限制其不会被隐式调用。
 
 `bitarry(const unsigned char* arry, const size_t len)` -> 从一个无符号 char 数组创建一个数组，\<len\>是 char 数组中的字符数。
 
@@ -29,7 +29,7 @@
 
 `void Print(unsigned short CHD)` -> 打印数组数据到 stdout。Modoul 0: Char, Modoul 1: Hex, Modoul 2: Decimal number.
 
-`const unsigned char* c_str()const` -> 返回数据指针。
+`const unsigned char* c_str()const` -> 返回数据指针。现在null对象返回指针不会是nullptr了，而是一个指向“\0”的指针。
 
 `const size_t resize()const` -> 返回数组的大小。
 
@@ -39,19 +39,11 @@
 
 `const char* err()`> 获取错误信息。并重置错误标志。
 
-#### 新增
 * `bitarry setMemModel(int model)` -> 设置读取的内存模型，0为正常的大端序模型（默认），1为局部小端序模型（单个unsigned char）内部。
 
 例如：0x64(0110 0100)在模式0下被认为从低到高比特位依次是0010 0110，而模式1会认为它是0110 0100。但是不影响整体的储存，比如char str={'a','b'}在两种模式下均为str\[0\]='a',str\[1\]='b'。
 
 * `[]`支持下标索引读取数据。
-
-#### 变化
-* 现在null对象通过`c_str()`返回指针不会是nullptr了，而是一个指向“\0”的指针。
-
-* 现在`bitarry(const size_t size)`构造函数使用`explicit`限制其不会被隐式调用。
-
-* 现在`setMemModel`和`setMermey`都会返回自身了，以支持链式调用。
 
 ### EDcode
 一些编码的函数。
@@ -64,3 +56,10 @@
 * `ToBase32`和`FromBase32`的实现。
 
 注意：除了实现`ToBase64(const char* str, unsigned char* buffer, int MaxLen)`，其他实现不会补充末尾的"="。
+
+### toolfunc
+一些功能函数
+
+* `HowLongUtf8` -> 查看一个utf-8字符是占几个字节。
+
+注意：普通windows环境编码不是utf-8,建议使用pwsh(code page: 65001)检查运行状况，如"a"长1，"α"长2，"我"长3，"🍑"长4。注意，这个函数没有检查连字的能力。

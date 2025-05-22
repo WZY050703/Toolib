@@ -14,7 +14,7 @@ This project is coded, checked and pulled all in VS. And it used the module whic
 #### init
 `bitarry()` -> Creat a null obj that don't have anything.
 
-`bitarry(const size_t size)` -> Creat a array that have \<size\> bits(8-bit alignment).
+`bitarry(const size_t size)` -> Creat a array that have \<size\> bits(8-bit alignment). Now uses `explicit` to prevent it from being called implicitly.
 
 `bitarry(const unsigned char* arry, const size_t len)` -> Creat a array from a unsigned char array, \<len\> is how many chars in the char array.
 
@@ -27,7 +27,7 @@ This project is coded, checked and pulled all in VS. And it used the module whic
 
 `void Print(unsigned short CHD)` -> Print array data to stdout. Modoul 0: Char, Modoul 1: Hex, Modoul 2: Decimal number.
 
-`const unsigned char* c_str()const` -> return the data pointer.
+`const unsigned char* c_str()const` -> return the data pointer.Now the null object returns a pointer pointing to "\0".
 
 `const size_t resize()const` -> return size of array.
 
@@ -37,19 +37,11 @@ This project is coded, checked and pulled all in VS. And it used the module whic
 
 `const char* err()` -> Get the information of err. And reset the err flag.
 
-#### New Added
 * `bitarry setMemModel(int model)` -> Set the memory model for reading, 0 is the normal large end-order model (default), 1 is the local small end-order model (single unsigned char) internal.
 
 For example: 0x64 (0110 0100) is considered as 0010 0110 from low to high bits in mode 0, while mode 1 recognizes it as 0110 0100. However, this does not affect the overall storage, for instance, char str={'a','b'} would still result in str\[0\]='a', str\[1\]='b' in both modes.
 
 * `[]`Support subscript index to read data.
-
-#### Change 
-* Now the null object returns a pointer through `c_str()` that is no longer nullptr, but rather a pointer pointing to "\0".
-
-* The `bitarry(const size_t size)` constructor now uses `explicit` to prevent it from being called implicitly.
-
-* Now `setMemModel` and `setMermey` both return themselves to support chain calling.
 
 ### EDcode
 Some encoded functions.
@@ -62,3 +54,10 @@ Some encoded functions.
 * Implementations of `ToBase32` and `FromBase32`.
 
 Note: implementations will not complement the “=” at the end, except for `ToBase64(const char* str, unsigned char* buffer, int MaxLen)`.
+
+### toolfunc
+Some functional functions
+
+* 'HowLongUtf8' -> to see how many bytes a utf-8 character is counted.
+
+Note: The common Chinese Windows environment is not encoded as UTF-8, it is recommended to use PWSH (code page: 65001) to check the health status, such as "a" is long 1, "α" is long 2, "我" is long 3, and "🍑" is long 4. Note that this function does not have the ability to check ligatures.

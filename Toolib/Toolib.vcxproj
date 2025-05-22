@@ -135,6 +135,8 @@
     <ClCompile Include="bitIO.ixx" />
     <ClCompile Include="EDcode.cpp" />
     <ClCompile Include="EDcode.ixx" />
+    <ClCompile Include="toolfunc.cpp" />
+    <ClCompile Include="toolfunc.ixx" />
     <ClCompile Include="Tools.ixx" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>

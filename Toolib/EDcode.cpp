@@ -1,5 +1,5 @@
-import std.compat;
 module WoodTools:EDcode;
+import std.compat;
 import :bitIO;
 
 namespace wood {

@@ -33,5 +33,11 @@
     <ClCompile Include="bitIO.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="toolfunc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="toolfunc.ixx">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

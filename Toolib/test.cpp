@@ -5,15 +5,11 @@ int main()
 {
 	using namespace std;
 
-	char si[] = "qweas";
-	wood::bitarry bsX = wood::ToBase2X(5, si, 5, BASE32);
-	cout << "baseX=32: ";
-	bsX.Print(0);
-	cout << endl;
-
-	wood::bitarry res = wood::FromBase2X(5, bsX, BASE32);
-	cout << "str: ";
-	res.Print(0);
-	cout << endl;
+	unsigned char si[80] = {};
+	cout << "Input:";
+	cin >> si;
+	cout << "len: " << wood::HowLongUtf8(si) << endl;
+	wood::bitarry bi(si, 10);
+	bi.Print(1);
 	return 0;
 }
